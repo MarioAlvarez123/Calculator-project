@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        body {
+  margin: 50px;
+  background-color: #b5563c;
+ 
+}
+div#container {
+  width: 80%;
+  height: 80vh;
+  background-color: #7a220c;
+  margin: auto;
+  border-radius: 100px;
+  top: 40px;
+  position: relative;
+}
+div.flex {
+  display:flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 2%;
+  
+}
+div.parent {
+/*   border: 1px solid yellow; */
+  height: 70%;
+  box-sizing: border-box;
+  background-color: #7a220c;
+  color: white;
+  border-radius: 100px;
+  
+}
+div.p1 {
+  width: 80%;
+  float: left;
+  position: relative;
+  left: 25px;
+  top: 25px;
+  
+}
+div.p2 {
+  width: 20%;
+  float: right;
+  position: inline-block;
+  display: flex;
+  flex-direction: column;
+ 
+}
+button.number-buttons {
+  height: 20%;
+  flex: 0 0 30%;
+  border-radius: 100px;
+  background-color: #300b01;
+  color: white;
+  border: 2px solid black;
+}
+button.number-buttons:hover {
+  color: red;
+}
+button.operation-buttons {
+  height: 10%;
+  flex: 0 0 18%;
+  border-radius: 100px;
+/*   position: relative; */
+/*   display: inline-block; */
+  width: 100px;
+  background-color: blue;
+  border: 2px solid black;
+  color: white;
+}
+button.operation-buttons:hover {
+  color: red;
+}
+button#equal {
+  height: 20%;
+  flex: 0 0 60%;
+  position: inline-block;
+  order: 10;
+}
+button#clear {
+  background-color: red;
+}
+button.operationClear-button:hover {
+  color: red;
+}
+input#display {
+  height: 15%;
+  width: 80%;
+  position: relative;
+  left: 50px;
+  margin: 3%;
+  border-radius: 100px;
+  top: 20px;
+   font-size: calc(2vw + 2vh);
+/*   align-items: center;
+  justify-content: center; */
+}
+
+    </style>
+</head>
+<body>
+    <div id="container">
+  <input type="text" id="display" maxLength="10" disabled>
+  <div class="parent p1 flex" id="numbers">
+<!-- <!--     <button class="number-buttons" type="buttons">0</button> -->
+    <button class="operation-buttons" id="equal" type="buttons">=</button>
+  </div>
+  <div class="parent p2 flex" id="symbols">
+    <button class="operation-buttons" id="clear" type="buttons">C</button>
+    <button class="operation-buttons" id="add" type="buttons">+</button>
+    <button class="operation-buttons" id="subtract" type="buttons">-</button>
+    <button class="operation-buttons" id="multiply" type="buttons">*</button>
+    <button class="operation-buttons" id="divide" type="buttons">/</button>
+  </div>
+</div>
+    <script>
+       const container = document.getElementById("container");
+const resultDisplay = document.getElementById("display");
+const numbers = document.getElementById("numbers");
+const clearButton = document.getElementById("clear");
+const equalButton = document.getElementById("equal");
+const addButton = document.getElementById("add");
+const minusButton = document.getElementById("subtract");
+const divideButton = document.getElementById("divide");
+const multiplyButton = document.getElementById("multiply");
+let maxLength = resultDisplay.getAttribute("maxLength");
+resultDisplay.value = "0";
+
+let tempNumber = null;
+let firstNumber = null;
+let secondNumber = null;
+let operation = null;
+let result = null;
+
+for (let i = 0; i < 10; i++) {
+  // console.log("i is: " + i)
+  const button = document.createElement("button");
+  button.type = "button";
+  button.classList.add("number-buttons");
+  button.classList.add("input-button");
+  button.textContent = i;
+  button.setAttribute("data-value", i);
+  // console.log(button);
+  if (i === 0) {
+    button.style.order = 1;
+  }
+
+  numbers.appendChild(button);
+}
+
+const numberButtons = document.querySelectorAll(".number-buttons");
+
+// console.log(numberButtons);
+
+numberButtons.forEach((button, index) => {
+  let dataValue = parseInt(button.getAttribute("data-value"));
+  console.log(dataValue);
+
+  button.addEventListener("click", function (event) {
+    if (resultDisplay.value.length < maxLength) {
+      
+      if (operation === null) {
+         if (firstNumber === null || firstNumber === 0) {
+           firstNumber = dataValue;
+         } else {
+           firstNumber =
+             parseInt(firstNumber.toString().concat(dataValue));
+         }
+        resultDisplay.value = firstNumber.toString();
+      } else {
+        if (secondNumber === null || secondNumber === 0) {
+          secondNumber = dataValue;
+          } else {
+   secondNumber = parseInt(secondNumber.toString().concat(dataValue));
+           }
+           resultDisplay.value = secondNumber.toString();
+      }
+        
+          
+      
+          
+          
+      //     const tempNumber = dataValue;
+      // resultDisplay.value += tempNumber;
+    }
+  });
+});
+
+function clearValues() {
+  tempNumber = null;
+  firstNumber = null;
+  secondNumber = null;
+  result = null;
+  operation = null;
+  resultDisplay.value = 0;
+}
+clearButton.addEventListener('click', function (event) {
+  clearValues();
+});
+
+
+const operationButtons = document.querySelectorAll('.operation-buttons');
+operationButtons.forEach(button => {
+  button.addEventListener('click', function(event) {
+    const thisOperation = event.target.id;
+    if (firstNumber !== null && secondNumber === null) {
+      switch (thisOperation) {
+        case "add":
+          operation = "+";
+          break;
+        case "subtract":
+          operation = "-";
+          break;
+        case "multiply":
+          operation = "*";
+          break;
+        case "divide":
+          operation = "/";
+          break;
+      }
+      resultDisplay.value = operation;
+    }
+  });
+});
+
+equalButton.addEventListener('click', function(event) {
+  if (secondNumber !== null) {
+    switch (operation) {
+      case "+":
+        result = firstNumber + secondNumber;
+        break;
+      case "-":
+        result = firstNumber - secondNumber;
+        break;
+      case "*":
+        result = firstNumber * secondNumber;
+        break;
+      case "/":
+        result = firstNumber / secondNumber;
+        break;
+    }
+    resultDisplay.value = result;
+  }
+})
+ 
+    </script>
+</body>
+</html>
